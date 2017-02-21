@@ -10,16 +10,16 @@ def etl(content):
 
 output = './'
 
-dictionary = corpora.Dictionary.load("all.dic")
+dictionary = corpora.Dictionary.load("./models/all.dic")
 
-tfidfModel = models.TfidfModel.load("allTFIDF.mdl")
-indexTfidf = similarities.MatrixSimilarity.load("allTFIDF.idx")
+tfidfModel = models.TfidfModel.load("./models/allTFIDF.mdl")
+indexTfidf = similarities.MatrixSimilarity.load("./models/allTFIDF.idx")
 
-ldaModel = models.LdaModel.load("allLDA50Topic.mdl")
-indexLDA = similarities.MatrixSimilarity.load("allLDA50Topic.idx")
+ldaModel = models.LdaModel.load("./models/allLDATopic.mdl")
+indexLDA = similarities.MatrixSimilarity.load("./models/allLDATopic.idx")
 
 # query test
-query = '上海女友激情潮吹'
+query = ''
 
 query_bow = dictionary.doc2bow(filter(lambda x: len(x)>1,map(etl,jieba.cut(query,cut_all=False))))
 tfidfvect = tfidfModel[query_bow]
