@@ -1,14 +1,10 @@
-#coding=utf8
-import re
+# coding=utf8
 import jieba
-from gensim import corpora,models,similarities,utils
+from gensim import corpora, models, similarities
 
-etlregex = re.compile(ur"[^\u4e00-\u9f5a0-9]")
-def etl(content):
-    content = etlregex.sub('',content)
-    return content
+from utils import Utils
 
-output = './'
+docinfo = Utils.loadObject('./data/raw_info')    # load raw doc info to map to real data
 
 dictionary = corpora.Dictionary.load("./models/all.dic")
 
@@ -21,14 +17,19 @@ indexLDA = similarities.MatrixSimilarity.load("./models/allLDATopic.idx")
 # query test
 query = ''
 
-query_bow = dictionary.doc2bow(filter(lambda x: len(x)>1,map(etl,jieba.cut(query,cut_all=False))))
+query_bow = dictionary.doc2bow(filter(lambda x: len(x) > 1, map(Utils.sanitize, jieba.cut(query, cut_all=False))))
 tfidfvect = tfidfModel[query_bow]
 ldavec = ldaModel[tfidfvect]
 simstfidf = indexTfidf[tfidfvect]
 simlda = indexLDA[ldavec]
 
 # print(simstfidf)
-print(simlda)
+# print(simlda)
 
 sort_sims = sorted(enumerate(simlda), key=lambda item: -item[1])
-print sort_sims[0:10]
+
+print sort_sims
+
+print 'top 10 similar: '
+for sim in sort_sims[0:10]:
+    print docinfo[sim[0]]

@@ -1,5 +1,5 @@
 from gensim import corpora,models,similarities,utils
-import pickle;
+import pickle
 
 fenci = open('./data/jieba_fenci', 'r')
 
