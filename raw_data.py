@@ -1,11 +1,12 @@
+# coding=utf-8
 import re
+import codecs
 from utils import Utils
 
-f = open('./data/data.sql')
-raw = open('./data/raw', 'w+')
+f = codecs.open('./data/data.sql', mode='r', encoding='utf-8')
+raw = codecs.open('./data/raw', mode='w+', encoding='utf-8')
 
 pattern = re.compile("\(\d+,\'(.*?)\'")
-# pattern = re.compile(u"[\u4e00-\u9fa5]+")
 
 result = []
 docinfos = []
@@ -14,7 +15,7 @@ jointResult = ''
 try:
     for line in f:
         result = re.findall(pattern, line)
-        if (len(result) > 0):
+        if len(result) > 0:
             # jointResult = jointResult + '\n'.join(result)
             for title in result:
                 docinfos.append(title)

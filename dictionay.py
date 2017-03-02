@@ -1,21 +1,24 @@
+# coding=utf-8
 import jieba
-import pickle
+import codecs
 from utils import Utils
 
-raw = open('./data/raw')
-fenci = open('./data/jieba_fenci', 'w')
+raw = codecs.open('./data/raw', encoding='utf-8')
+jieba.load_userdict('./data/custom_user_dict')
 train_set = []
 
 try:
     for line in raw:
         sList = map(Utils.sanitize, jieba.cut(line, cut_all=False))
         # TODO: len > 1 should not be the criteria, should just filter the stop word
-        filtered = filter(lambda x: len(x) > 1, sList)
+        filtered = filter(lambda x: Utils.filter_stopwords(x), sList)
+        print ','.join(filtered)
         train_set.append(filtered)
-        # print '\\'.join(final)
         # train_set = train_set + filtered;
 finally:
     raw.close()
 
-pickle.dump(train_set, fenci)  # serialize to file
+# for line in train_set:
+#     print(','.join(line))
 
+Utils.saveObject('./data/jiba_fenci', train_set)    # use pickle to serialize object in binary file
