@@ -1,7 +1,7 @@
 # coding=utf-8
 import jieba
 import codecs
-from utils import Utils
+from utils.utils import Utils
 
 raw = codecs.open('./data/raw', encoding='utf-8')
 jieba.load_userdict('./data/custom_user_dict')
@@ -21,4 +21,4 @@ finally:
 # for line in train_set:
 #     print(','.join(line))
 
-Utils.saveObject('./data/jiba_fenci', train_set)    # use pickle to serialize object in binary file
+Utils.saveObject('./data/jieba_fenci', train_set)    # use pickle to serialize object in binary file

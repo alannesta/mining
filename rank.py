@@ -1,7 +1,7 @@
 # coding=utf8
 import jieba
 from gensim import corpora, models, similarities
-from utils import Utils
+from utils.utils import Utils
 
 base = './models_v2'
 

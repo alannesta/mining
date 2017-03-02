@@ -1,7 +1,7 @@
 # coding=utf-8
 import re
 import codecs
-from utils import Utils
+from utils.utils import Utils
 
 f = codecs.open('./data/data.sql', mode='r', encoding='utf-8')
 raw = codecs.open('./data/raw', mode='w+', encoding='utf-8')
@@ -24,9 +24,5 @@ finally:
     f.close()
 
 Utils.saveObject('./data/raw_info', docinfos)     # save a copy of raw info for future reference
-# jointResult = jointResult + '\n'.join(result)
 raw.write(jointResult)
 raw.close()
-
-# for word in result:
-#     print(word.decode('utf8'))
