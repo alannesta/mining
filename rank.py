@@ -75,3 +75,11 @@ sort_simsP10 = sorted(enumerate(simldaP10), key=lambda item: -item[1])
 print 'top 10 similar LDA pass=10: '
 for sim in sort_simsP10[0:10]:
     print docinfo[sim[0]]
+
+print '------------------------华丽的分割线----------------------------'
+
+sort_tfidf = sorted(enumerate(simstfidf), key=lambda item: -item[1])
+
+print 'top 10 similar TF-IDF: '
+for sim in sort_tfidf[0:10]:
+    print docinfo[sim[0]]
