@@ -1,2 +1,4 @@
 data
 models
+models_v2
+*.pyc
