@@ -16,6 +16,12 @@ class Utils:
         return content
 
     @staticmethod
+    def filter_keywords(content):
+        wordReg = re.compile(ur'[\u4e00-\u9fff]|3[pP]', re.UNICODE)
+        result = re.findall(wordReg, content)   # a list of matching strings
+        return ''.join(result)
+
+    @staticmethod
     def filter_stopwords(word):
         return word not in Utils.stop_words and Utils.regex_qq.match(word) == None and len(word) > 0
 

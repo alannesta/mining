@@ -10,10 +10,8 @@ from utils.utils import Utils
 
 # print(Utils.filter_stopwords)
 sList = [u'云盘', u'谷歌', u'百度']
-filtered = filter(lambda x: Utils.filter_stopwords(x), sList)
+filtered = filter(Utils.filter_stopwords, sList)
 print ','.join(filtered)
 
-
-
-
-
+content = u'测试3?p<>!!卡,?3P?哈'
+print Utils.filter_keywords(content)

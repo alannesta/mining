@@ -27,7 +27,7 @@ indexLDAP10 = similarities.MatrixSimilarity.load(base + "/allLDATopicPass10.idx"
 # query test
 query = ''
 
-query_bow = dictionary.doc2bow(filter(lambda x: Utils.filter_stopwords(x), map(Utils.sanitize, jieba.cut(query, cut_all=False))))
+query_bow = dictionary.doc2bow(filter(Utils.filter_stopwords, map(Utils.filter_keywords, jieba.cut(query, cut_all=False))))
 tfidfvect = tfidfModel[query_bow]
 simstfidf = indexTfidf[tfidfvect]
 
