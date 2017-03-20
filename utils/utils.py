@@ -29,20 +29,6 @@ class Utils:
         return word not in Utils.stop_words and Utils.regex_qq.match(word) == None and len(word) > 0
 
     @staticmethod
-    def remove_dup(collection):
-        print('start deduping collection of size: ' + str(len(collection)))
-        timestamp = time.time()
-        for index1, word1 in enumerate(collection):
-            for index2, word2 in enumerate(collection):
-                if index2 > index1:
-                    (maxLen, endIndex) = DFLCS(word1, word2)
-                    if maxLen > 7:
-                        collection[index2] = ''
-
-        print('time used: ' + str((time.time() - timestamp)))
-        return filter(lambda x: len(x) > 0, collection)
-
-    @staticmethod
     def saveObject(filename, obj):
         f = codecs.open(filename, mode='wb')
         pickle.dump(obj, f)
@@ -55,3 +41,51 @@ class Utils:
         obj = pickle.load(f)
         f.close()
         return obj
+
+    def remove_dup(self, collection, filter_words):
+        print('start deduping collection of size: ' + str(len(collection)))
+        timestamp = time.time()
+        for index1, word1 in enumerate(collection):
+            if len(word1) == 0:
+                continue
+            for index2, word2 in enumerate(collection):
+                if index2 > index1:
+                    (maxLen, endIndex) = DFLCS(self.filterHighFreq(word1, filter_words), word2)
+                    if maxLen > 7:
+                        collection[index2] = ''
+
+        print('time used: ' + str((time.time() - timestamp)))
+        return filter(lambda x: len(x) > 0, collection)
+
+    def generateHightFreq(self, collection):
+        timestamp = time.time()
+        highFreq = dict()
+        for index1, word1 in enumerate(collection):
+            if len(word1) == 0:
+                continue
+            for index2, word2 in enumerate(collection):
+                if index2 > index1:
+                    (maxLen, endIndex) = DFLCS(word1, word2)
+                    commonSub = word1[int(endIndex - maxLen + 1):int(endIndex + 1)]
+                    if maxLen > 7:
+                        if commonSub in highFreq:
+                            highFreq[commonSub] += 1
+                        else:
+                            highFreq[commonSub] = 1
+                        collection[index2] = ''
+
+        print('generate freq time used: ' + str((time.time() - timestamp)))
+        return self.extractHighFreq(highFreq)
+
+    def extractHighFreq(self, freq_dict):
+        result = []
+        for key in freq_dict.keys():
+            if freq_dict[key] > 10:
+                result.append(key)
+        return result
+
+    def filterHighFreq(self, word, filter_list):
+        for filter_word in filter_list:
+            if filter_word in word:
+                return word.replace(filter_word, '')
+        return word
