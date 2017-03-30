@@ -4,13 +4,16 @@
 
 var fs = require('fs');
 
-var content = fs.readFileSync('../data/raw', 'utf-8');
-var raw = content.split('\n').splice(0, 1000);
+var deletedIds = [];
+var content = fs.readFileSync('../data/raw_mapped', 'utf-8');
+var raw = content.split('\n').splice(0, 500);
 
 console.log(dedupe(raw, generateFilterWords(raw)).length);
 
 function generateFilterWords(rawData) {
-	let collection = [...rawData];	// avoid mutating the original collection
+	let collection = rawData.map((line) => {
+		return line.split('\t')[1];
+	});
 	console.time('filter_words');
 	let dupeMap = {};
 	for (var i = 0; i < collection.length; i++) {
@@ -40,9 +43,12 @@ function dedupe(rawData, filterWords) {
 			continue;
 		}
 		for (var j = i + 1; j < collection.length; j++) {
-			let {maxLen} = DPLCS(filterJunkWord(collection[i], filterWords), collection[j]);
-			if (maxLen > 7) {
-				collection[j] = '';
+			if (collection[j].length > 0) {
+				let {maxLen} = DPLCS(filterJunkWord(collection[i].split('\t')[1], filterWords), collection[j].split('\t')[1]);
+				if (maxLen > 7) {
+					deletedIds.push(collection[j].split('\t')[0]);
+					collection[j] = '';
+				}
 			}
 		}
 	}
@@ -52,6 +58,7 @@ function dedupe(rawData, filterWords) {
 	});
 
 	fs.writeFileSync('../data/raw_dedupe_nodejs', result.join('\n'));
+	fs.writeFileSync('../data/deleted_ids_nodejs', deletedIds.join('\n'));
 
 	return result;
 }

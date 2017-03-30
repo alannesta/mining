@@ -3,6 +3,8 @@ import re
 import pickle
 import codecs
 import time
+import copy
+
 from lcs import DFLCS
 
 
@@ -42,22 +44,33 @@ class Utils:
         f.close()
         return obj
 
-    def remove_dup(self, collection, filter_words):
+    def remove_dup(self, raw_list, filter_words):
+        # each line in the collection contains the id and title in the form of: id [\t] title
+        collection = copy.copy(raw_list)
+
+        result = dict() # a map of
+        deleted_ids = []
+
         print('start deduping collection of size: ' + str(len(collection)))
         timestamp = time.time()
         for index1, word1 in enumerate(collection):
             if len(word1) == 0:
                 continue
             for index2, word2 in enumerate(collection):
-                if index2 > index1:
-                    (maxLen, endIndex) = DFLCS(self.filterHighFreq(word1, filter_words), word2)
+                if index2 > index1 and len(word2) > 0:
+                    (maxLen, endIndex) = DFLCS(self.filterHighFreq(word1.split('\t')[1], filter_words), word2.split('\t')[1])
                     if maxLen > 7:
+                        deleted_ids.append(word2.split('\t')[0])
                         collection[index2] = ''
 
         print('time used: ' + str((time.time() - timestamp)))
-        return filter(lambda x: len(x) > 0, collection)
+        result['word_list'] = filter(lambda x: len(x) > 0, collection)
+        result['deleted_ids'] = deleted_ids
+        return result
 
-    def generateHightFreq(self, collection):
+    def generateHightFreq(self, raw_list):
+        # for generate frequency map, just need words without ids
+        collection = copy.copy(map(lambda x: x.strip().split('\t')[1], raw_list))
         timestamp = time.time()
         highFreq = dict()
         for index1, word1 in enumerate(collection):

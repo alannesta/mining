@@ -4,28 +4,29 @@ import codecs
 from utils.utils import Utils
 
 f = codecs.open('./data/data.sql', mode='r', encoding='utf-8')
-raw = codecs.open('./data/raw_dedupe_2', mode='w+', encoding='utf-8')
+raw = codecs.open('./data/raw_mapped', mode='w+', encoding='utf-8')
 
-pattern = re.compile("\(\d+,\'(.*?)\'")
+pattern = re.compile("\((\d+),\'(.*?)\'")
 
 utilInstance = Utils()
 result = []
 docinfos = []
 jointResult = ''
 
+# raw data in the format of: id [tab] title
+def build_raw(matches):
+    return matches[0] + '\t' + matches[1]
+
 try:
     for line in f:
         result = re.findall(pattern, line)
         if len(result) > 0:
-            # since collection is mutated in this function
-            filter_words = utilInstance.generateHightFreq(re.findall(pattern, line))
-            deduped = utilInstance.remove_dup(re.findall(pattern, line), filter_words)
-            for title in deduped:
-                docinfos.append(title)
-                jointResult += title+'\n'
+            construct = map(build_raw, result)
+            for nline in construct:
+                jointResult += nline+'\n'
 finally:
     f.close()
 
-Utils.saveObject('./data/raw_info_dedupe', docinfos)     # save a copy of raw info for future reference
+# Utils.saveObject('./data/raw_info_dedupe', docinfos)     # save a copy of raw info for future reference
 raw.write(jointResult)
 raw.close()
